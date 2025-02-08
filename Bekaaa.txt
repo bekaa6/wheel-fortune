@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Колесо Фортуны</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            background-color: #f0f0f0;
+        }
+        .wheel-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+        }
+        .wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 5px solid #000;
+            position: absolute;
+            transition: transform 3s ease-out;
+        }
+        .pointer {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 40px;
+            background: red;
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="wheel-container">
+        <div class="pointer"></div>
+        <canvas id="wheelCanvas" class="wheel"></canvas>
+    </div>
+    <button onclick="spinWheel()">Крутить</button>
+
+    <script>
+        const canvas = document.getElementById("wheelCanvas");
+        const ctx = canvas.getContext("2d");
+        const sectors = ["Приз 1", "Приз 2", "Приз 3", "Приз 4", "Приз 5", "Приз 6"];
+        const colors = ["#FF5733", "#33FF57", "#3357FF", "#F3FF33", "#FF33A8", "#A833FF"];
+        let currentAngle = 0;
+
+        function drawWheel() {
+            const numSectors = sectors.length;
+            const arc = (2 * Math.PI) / numSectors;
+            canvas.width = 300;
+            canvas.height = 300;
+
+            for (let i = 0; i < numSectors; i++) {
+                ctx.beginPath();
+                ctx.fillStyle = colors[i];
+                ctx.moveTo(150, 150);
+                ctx.arc(150, 150, 150, arc * i, arc * (i + 1));
+                ctx.lineTo(150, 150);
+                ctx.fill();
+                ctx.stroke();
+                ctx.closePath();
+                
+                ctx.save();
+                ctx.translate(150, 150);
+                ctx.rotate(arc * (i + 0.5));
+                ctx.fillStyle = "black";
+                ctx.font = "16px Arial";
+                ctx.fillText(sectors[i], 80, 5);
+                ctx.restore();
+            }
+        }
+
+        function spinWheel() {
+            let spins = Math.floor(Math.random() * 6) + 3;
+            let randomAngle = Math.random() * 360;
+            let totalRotation = 360 * spins + randomAngle;
+            currentAngle += totalRotation;
+            canvas.style.transform = `rotate(${currentAngle}deg)`;
+        }
+
+        drawWheel();
+    </script>
+</body>
+</html>
